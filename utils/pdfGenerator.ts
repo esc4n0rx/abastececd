@@ -1,3 +1,5 @@
+// Correção na função exportAbastecimentoPdf em utils/pdfGenerator.ts
+
 // utils/pdfGenerator.ts
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -12,12 +14,14 @@ interface GeneratePdfOptions {
   compacto: boolean;
 }
 
-// Função para gerar o PDF do relatório usando autoTable(doc, …)
 export const generateAbastecimentoPdf = (
   data: RuaData[],
   options: GeneratePdfOptions
 ): jsPDF => {
   try {
+    // Primeiro, aplique os filtros aos dados
+    const filteredData = applyPdfFilters(data, options);
+    
     const doc = new jsPDF('portrait', 'mm', 'a4');
 
     const margin = 15;
@@ -64,7 +68,8 @@ export const generateAbastecimentoPdf = (
 
     const fontSize = options.compacto ? 8 : 10;
 
-    data.forEach((ruaData, ruaIndex) => {
+    // Renderizar apenas dados filtrados
+    filteredData.forEach((ruaData, ruaIndex) => {
       if (ruaIndex > 0 && !options.compacto) {
         doc.addPage();
         currentY = margin;
@@ -101,7 +106,7 @@ export const generateAbastecimentoPdf = (
         return row;
       });
 
-      // Gera a tabela via autoTable(doc, { … })
+      // Gera a tabela via autoTable
       autoTable(doc, {
         startY: currentY,
         head: [tableHeaders],
@@ -169,6 +174,52 @@ export const generateAbastecimentoPdf = (
     throw error;
   }
 };
+
+// Nova função para aplicar filtros aos dados antes de gerar o PDF
+function applyPdfFilters(data: RuaData[], options: GeneratePdfOptions): RuaData[] {
+  if (!data || data.length === 0) return [];
+
+  return data
+    .map(ruaData => {
+      // Aplicar filtro de rua
+      if (options.ruaFilter !== "todas" && ruaData.rua !== options.ruaFilter) {
+        return null;
+      }
+
+      // Filtrar posições dentro desta rua
+      const filteredPosicoes = ruaData.posicoes.filter(posicao => {
+        // Helper para calcular percentual
+        const percentual = Math.min(100, Math.round((posicao.saldoAtual / posicao.demanda) * 100));
+        
+        // Aplicar filtro de prioridade
+        if (options.prioridadeFilter !== "todas") {
+          if (options.prioridadeFilter === "critico" && percentual >= 20) return false;
+          if (options.prioridadeFilter === "medio" && (percentual < 20 || percentual >= 50)) return false;
+          if (options.prioridadeFilter === "normal" && percentual < 50) return false;
+        }
+        
+        // Aplicar filtro de depósito
+        if (options.depositoFilter !== "todos" && posicao.deposito !== options.depositoFilter) {
+          return false;
+        }
+        
+        // Se passar por todos os filtros, incluir esta posição
+        return true;
+      });
+
+      // Se não houver posições após filtros, não incluir esta rua
+      if (filteredPosicoes.length === 0) {
+        return null;
+      }
+
+      // Retornar a rua com posições filtradas
+      return {
+        ...ruaData,
+        posicoes: filteredPosicoes
+      };
+    })
+    .filter(Boolean) as RuaData[]; // Remover null
+}
 
 // Função para exportar e salvar o PDF
 export const exportAbastecimentoPdf = (
