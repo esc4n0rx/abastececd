@@ -382,13 +382,13 @@ async function calculatePositions() {
         let rua = "Rua N/A";
         
         // Extrair os dígitos de rua (posições 3-4 para posições com 10 caracteres)
-        if (posicao && posicao.length >= 5) {
-          // Procurar um padrão como "0601" no meio da string
-          const match = posicao.match(/[A-Z0-9]+(\d{2})\d{2}/);
-          if (match && match[1]) {
-            rua = `Rua ${match[1]}`;
-          }
-        }
+        if (posicao) {
+            const match = posicao.match(/H3[SPBC](\d{2})/i);
+            if (match && match[1]) {
+                rua = `Rua ${match[1]}`;
+            }
+            }
+
         
         // Determine deposito based on prefix
         let deposito = "DP01"; // Valor padrão

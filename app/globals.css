@@ -57,3 +57,128 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+/* styles/report-print.css */
+@media print {
+  /* Ocultar elementos de navegação e UI para impressão */
+  header, nav, footer, button, .no-print {
+    display: none !important;
+  }
+  
+  /* Garantir que o conteúdo seja mostrado em preto e branco */
+  body {
+    color: black;
+    background: white;
+    font-family: Arial, sans-serif;
+    font-size: 12pt;
+    line-height: 1.3;
+  }
+  
+  /* Estilos para tabelas */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    page-break-inside: auto;
+  }
+  
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+  
+  th {
+    background-color: #f0f0f0 !important;
+    border-bottom: 1.5px solid #000;
+    font-weight: bold;
+    text-align: left;
+    padding: 8px 4px;
+  }
+  
+  td {
+    border-bottom: 1px solid #ddd;
+    padding: 6px 4px;
+    text-align: left;
+  }
+  
+  /* Evitar quebra de página no meio de uma seção */
+  .rua-section {
+    page-break-inside: avoid;
+  }
+  
+  /* Forçar quebra de página quando necessário */
+  .page-break {
+    page-break-before: always;
+  }
+  
+  /* Estilos para cabeçalhos */
+  h1 {
+    font-size: 18pt;
+    margin-bottom: 8px;
+  }
+  
+  h2 {
+    font-size: 14pt;
+    margin-bottom: 6px;
+    border-bottom: 2px solid #000;
+    padding-bottom: 4px;
+  }
+  
+  /* Status dos itens */
+  .status-critico {
+    font-weight: bold;
+  }
+  
+  .status-medio {
+    font-style: italic;
+  }
+  
+  /* Áreas de assinatura */
+  .signature-area {
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .signature-line {
+    width: 45%;
+    border-top: 1px solid #000;
+    padding-top: 4px;
+    text-align: center;
+  }
+  
+  /* Rodapé da página */
+  .footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 8pt;
+    border-top: 1px solid #ddd;
+    padding-top: 4px;
+  }
+  
+  /* Substituir cores por padrões em preto e branco */
+  .bg-red-500, .bg-yellow-500, .bg-green-500 {
+    background-color: white !important;
+  }
+  
+  .text-red-500, .text-yellow-500, .text-green-500 {
+    color: black !important;
+  }
+  
+  /* Usar padrões de preenchimento em vez de cores */
+  .pattern-critical {
+    background-image: repeating-linear-gradient(45deg, #000, #000 2px, #fff 2px, #fff 8px);
+  }
+  
+  .pattern-medium {
+    background-image: repeating-linear-gradient(90deg, #000, #000 1px, #fff 1px, #fff 6px);
+  }
+  
+  /* Sombras para destacar elementos críticos */
+  .highlight-box {
+    border: 1px solid #000;
+    padding: 2px 4px;
+  }
+}

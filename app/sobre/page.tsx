@@ -103,7 +103,7 @@ export default function Sobre() {
                     DEV
                   </div>
                   <div className="text-center md:text-left">
-                    <h3 className="text-xl font-semibold mb-2">Desenvolvedor AbasteceCD</h3>
+                    <h3 className="text-xl font-semibold mb-2">Paulo Oliveira </h3>
                     <p className="text-muted-foreground mb-4">
                       Desenvolvedor Full Stack especializado em soluções para logística e gestão de estoque.
                     </p>

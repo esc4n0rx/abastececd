@@ -1,4 +1,4 @@
-// app/posicoes/page.tsx - versão atualizada com filtro de depósito
+// app/posicoes/page.tsx - Com a nova feature de relatório
 "use client"
 
 import type React from "react"
@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
+import { RelatorioModal } from "../../components/RelatorioModal"
 
 interface Posicao {
   codigo: string
@@ -42,6 +43,8 @@ export default function Posicoes() {
   const [data, setData] = useState<RuaData[]>([])
   const [ruas, setRuas] = useState<string[]>([])
   const [depositos, setDepositos] = useState<string[]>(["DP01", "DP40"])
+  // Novo estado para controlar o modal de relatório
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false)
 
   useEffect(() => {
     fetchData();
@@ -138,14 +141,13 @@ export default function Posicoes() {
     fetchData();
   };
 
+  // Função atualizada para abrir o modal de relatório em vez de mostrar o toast
   const handleGerarRelatorio = () => {
-    toast.success("Relatório gerado com sucesso!", {
-      description: "O relatório foi preparado para impressão.",
-      action: {
-        label: "Imprimir",
-        onClick: () => window.print()
-      }
-    });
+    setIsReportModalOpen(true);
+  };
+
+  const handleCloseReportModal = () => {
+    setIsReportModalOpen(false);
   };
 
   const getPercentual = (saldoAtual: number, demanda: number) => {
@@ -389,6 +391,15 @@ export default function Posicoes() {
           </div>
         )}
       </main>
+
+      {/* Modal de Relatório */}
+      <RelatorioModal 
+        isOpen={isReportModalOpen} 
+        onClose={handleCloseReportModal} 
+        data={data} 
+        ruas={ruas} 
+        depositos={depositos} 
+      />
     </div>
   )
 }
